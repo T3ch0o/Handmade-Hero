@@ -22,6 +22,31 @@ LRESULT CALLBACK MainWindowCallback(HWND window, UINT message, WPARAM wParam, LP
 		{
 			OutputDebugStringA("WM_ACTIVATEAPP");
 		} break;
+		case WM_PAINT:
+		{
+			PAINTSTRUCT paint;
+			HDC deviceContext = BeginPaint(window, &paint);
+
+			int x = paint.rcPaint.left;
+			int y = paint.rcPaint.top;
+			int height = paint.rcPaint.bottom - paint.rcPaint.top;
+			int width = paint.rcPaint.right - paint.rcPaint.left;
+
+			static DWORD operation = WHITENESS;
+
+			PatBlt(deviceContext, x, y,width, height, operation);
+
+			if (operation == WHITENESS)
+			{
+				operation = BLACKNESS;
+			}
+			else
+			{
+				operation = WHITENESS;
+			}
+
+			EndPaint(window, &paint);
+		} break;
 		default: 
 		{
 			result = DefWindowProc(window, message, wParam, lParam);

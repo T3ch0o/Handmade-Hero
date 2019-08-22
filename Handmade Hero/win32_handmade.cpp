@@ -1,12 +1,90 @@
 #include <windows.h>
 
-int CALLBACK 
-WinMain(HINSTANCE hInstance,
-		HINSTANCE hPrevInstance,
-		LPSTR     lpCmdLine,
-		int       nShowCmd
-)
+LRESULT CALLBACK MainWindowCallback(HWND window, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	LRESULT result = 0;
+
+	switch(message)
+	{
+		case WM_SIZE:
+		{
+			OutputDebugStringA("WM_SIZE");
+		} break;
+		case WM_DESTROY:
+		{
+			OutputDebugStringA("WM_DESTROY");
+		} break;
+		case WM_CLOSE:
+		{
+			OutputDebugStringA("WM_CLOSE");
+		} break;
+		case WM_ACTIVATEAPP:
+		{
+			OutputDebugStringA("WM_ACTIVATEAPP");
+		} break;
+		default: 
+		{
+			result = DefWindowProc(window, message, wParam, lParam);
+		} break;
+	}
+
+	return result;
+}
+
+int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCommandLine, int nShowCmd)
+{
+	WNDCLASS windowClass {};
+
+
+	windowClass.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
+	windowClass.lpfnWndProc = MainWindowCallback;
+	windowClass.hInstance = hInstance;
+	//windowClass.hIcon = ;
+	windowClass.lpszClassName = "Handmade Hero";
+
+	if (RegisterClass(&windowClass))
+	{
+		const HWND windowHandle = CreateWindowEx
+		(
+			0,
+			windowClass.lpszClassName,
+			"Handmade Hero",
+			WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+			CW_USEDEFAULT,
+			CW_USEDEFAULT,
+			CW_USEDEFAULT,
+			CW_USEDEFAULT,
+			nullptr,
+			nullptr,
+			hInstance,
+			nullptr
+		);
+
+		if (windowHandle)
+		{
+			MSG message;
+			BOOL messageResult;
+
+			while ((messageResult = GetMessage(&message, nullptr, 0, 0)))
+			{
+				if (messageResult == -1)
+				{
+					break;
+				}
+
+				TranslateMessage(&message);
+				DispatchMessage(&message);
+			}
+		}
+		else
+		{
+			
+		}
+	}
+	else
+	{
+		
+	}
 
 	return 0;
 }
